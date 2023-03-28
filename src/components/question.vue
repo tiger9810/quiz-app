@@ -6,7 +6,7 @@
       :key="index"
       :data="answer"
       :correctAnswer="data.correct_answer"
-      @answer-click="handleAnswerClick"
+      @handleClick="handleAnswerClick"
     />
   </div>
 </template>
@@ -40,7 +40,7 @@ export default {
       return array;
     },
     handleAnswerClick(isCorrect) {
-      this.$emit('answer-selected', isCorrect);
+      this.$emit('answer-selected', isCorrect, this.data.correct_answer);
     },
   },
 };

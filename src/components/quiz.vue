@@ -5,6 +5,11 @@
     </div>
     <div v-else-if="quizState === 'in-progress'">
       <Question v-if="questions.length" :data="questions[currentQuestionIndex]" @answer-selected="handleAnswerSelected"/>
+      <div v-if="answerResult !== null">
+        <p v-if="answerResult">正解！</p>
+        <p v-else>不正解！正しい答えは「{{ correctAnswer }}」でした。</p>
+        <button @click="goToNextQuestion">次の問題へ</button>
+      </div>
     </div>
     <div v-else-if="quizState === 'finished'">
       <p>あなたのスコア: {{ score }}/{{ questions.length }}</p>
@@ -27,6 +32,8 @@ export default {
       questions: [],
       currentQuestionIndex: 0,
       score: 0,
+      answerResult: null,
+      correctAnswer: '',
     };
   },
   methods: {
@@ -39,12 +46,20 @@ export default {
       this.fetchQuiz();
       this.quizState = 'in-progress';
     },
-    handleAnswerSelected(isCorrect) {
+    handleAnswerSelected(isCorrect, correctAnswer) {
+      this.correctAnswer = correctAnswer;
       if (isCorrect) {
         this.score++;
+        this.answerResult = true;
+      } else {
+        this.answerResult = false;
       }
+    },
+    goToNextQuestion() {
       if (this.currentQuestionIndex < this.questions.length - 1) {
         this.currentQuestionIndex++;
+        this.correctAnswer = '';
+        this.answerResult = null;
       } else {
         this.quizState = 'finished';
       }
@@ -53,6 +68,7 @@ export default {
       this.quizState = 'not-started';
       this.currentQuestionIndex = 0;
       this.score = 0;
+      this.answerResult = null;
     },
   },
 };
