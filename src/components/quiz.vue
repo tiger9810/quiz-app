@@ -38,9 +38,19 @@ export default {
   },
   methods: {
     async fetchQuiz() {
-      const response = await fetch('https://opentdb.com/api.php?amount=10&type=multiple');
+      const response = await fetch('https://opentdb.com/api.php?amount=10&category=31&type=multiple&encode=url3986');
       const data = await response.json();
-      this.questions = data.results;
+      this.questions = data.results.map(result => {
+        const decodedQuestion = decodeURIComponent(result.question);
+        const decodedCorrectAnswer = decodeURIComponent(result.correct_answer);
+        const decodedIncorrectAnswers = result.incorrect_answers.map(answer => decodeURIComponent(answer));
+        return {
+          ...result,
+          question: decodedQuestion,
+          correct_answer: decodedCorrectAnswer,
+          incorrect_answers: decodedIncorrectAnswers,
+        }
+      });
     },
     startQuiz() {
       this.fetchQuiz();
